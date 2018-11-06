@@ -9,8 +9,7 @@ class Response extends AbstractResponse
 {
     public function __construct(RequestInterface $request, $response)
     {
-        $this->request = $request;
-        $this->data = $response->xml();
+        parent::__construct($request, $response);
     }
 
     public function isSuccessful()

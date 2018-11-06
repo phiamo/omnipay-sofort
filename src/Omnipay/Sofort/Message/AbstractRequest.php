@@ -49,11 +49,15 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     public function sendData($data)
     {
         $httpResponse = $this->httpClient
-            ->post($this->getEndpoint(), null, $data->asXML())
-            ->setAuth($this->getUsername(), $this->getPassword())
-            ->send();
+            ->request('POST', $this->getEndpoint(), [
+                'Authorization' => 'Basic '.base64_encode($this->getUsername().':'.$this->getPassword()),
+                'Content-Type' => 'application/xml',
+                'Accept' => 'application/xml'
+            ], $data->asXML());
 
-        return $this->createResponse($httpResponse);
+        $result = simplexml_load_string($httpResponse->getBody()->getContents());
+
+        return $this->createResponse($result);
     }
 
     abstract protected function createResponse($httpResponse);
